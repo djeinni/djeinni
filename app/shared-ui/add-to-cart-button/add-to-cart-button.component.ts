@@ -15,26 +15,20 @@ export class AddToCartButtonComponent {
   protected readonly cartService = inject(CartService);
   protected readonly _productId = signal<string>('');
 
+  protected readonly addToCartMessage = computed(() => {
+    const  total = this.cartService.cartItems()[this._productId()]?.quantity || 0;
+    
+    return total ? 'Add one to the ${total} in the cart' : 'Add one to cart';
+  })
+
+
   @Input({required: true}) set productId(id: string) {
     this._productId.set(id);
   }
 
-  @Input({ transform: booleanAttribute}) numberOnly: boolean = false;
-
-  protected readonly addToCartMessage = computed(() => {
+  protected buttonMessage = computed(() =>{
     const total = this.cartService.cartItems()[this._productId()]?.quantity || 0;
-
-    return total ? `Add one to the ${total} in the cart`
-    : 'Add one to cart';
+    return total ? '${total} in cart' : 'Add to cart';
   });
-
-  protected buttonMessage = computed(() => {
-    const total = this.cartService.cartItems()[this._productId()]?.quantity || 0;
-
-    return total
-      ? this.numberOnly
-        ? total
-        : `${total} in cart`
-      : 'Add to cart';
-  });
+  
 }
